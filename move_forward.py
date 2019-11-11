@@ -4,9 +4,16 @@ def move_forward(client, x, s):
     print("Moving to x + ", x, " at ", s, "m/s")
     #print(client.simGetGroundTruthKinematics())
     position = client.simGetGroundTruthKinematics()
-    print(str(position.position.x_val), " = ", str((position.position.x_val)+float(x)))
-    client.moveToPositionAsync(int((position.position.x_val)+float(x)), int(position.position.y_val), int(position.position.z_val), s).join()
+    
+    #xValue = int(position.position.x_val)+int(x)
+    #print(xValue)
+    #yValue = int(position.position.y_val)
+    #print(yValue)
+    #zValue = int(position.position.z_val)
+    #print(zValue)
+    
+    #client.moveToPositionAsync(xValue, yValue, zValue, int(s)).join()
+    client.moveToPositionAsync(int(position.position.x_val)+int(x), int(position.position.y_val), int(position.position.z_val), int(s)).join()
 
-    #values just not getting in?!
-
-    return 1
+    return 1;
+    
