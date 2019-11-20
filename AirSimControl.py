@@ -20,11 +20,20 @@ from move_right import move_right
 
 client = airsim.MultirotorClient()
 client.confirmConnection()
-client.enableApiControl(True)
-client.armDisarm(True)
+#client.enableApiControl(True)
+client.enableApiControl(True, "Drone1")
+client.enableApiControl(True, "Drone2")
+#client.armDisarm(True)
+client.armDisarm(True, "Drone1")
+client.armDisarm(True, "Drone2")
 
 #client.drivetrain = airsim.DrivetrainType.ForwardOnly
 #print("Fixed wing mode\n")
+
+dAlpha = client.takeoffAsync(vehicle_name="ALPHA")
+dBravo = client.takeoffAsync(vehicle_name="BRAVO")
+dAlpha.join()
+dBravo.join()
 
 print("\nCommand List\n--------------");
 pyfiles = []
@@ -38,17 +47,41 @@ pyfiles.remove('setup_path')
 print('\n'.join(pyfiles))
 print('*q or quit')
 
+file = open("callsigns.txt", "r")
+data = file.readlines()
 
 
 state = True
+callsign = False
+collectedCallsign = []
 
 while state:
     command = input("\nEnter Command: ")
     commandParse = command.split(" ");
     print(commandParse);
-
+    #if len(commandParse) == 
+    
+    #print(data)
+    for line in data:
+        words = line.split()
+        #print(words)
+        
+        try:
+            if words[0] == commandParse[1]:
+                #print(commandParse[1])
+                collectedCallsign = words
+                callsign = True
+                print(collectedCallsign)
+        except:
+            print("", end="")
+    
     if commandParse[0] == "move_to":
-        move_to(client, commandParse[1],commandParse[2],commandParse[3],commandParse[4])
+        if callsign:
+            move_to(client, collectedCallsign[1], collectedCallsign[2], collectedCallsign[3], commandParse[2])
+            #print(client, commandParse[1], collectedCallsign[1], collectedCallsign[2],collectedCallsign[3])
+            callsign = False
+        else:
+            move_to(client, commandParse[1],commandParse[2],commandParse[3],commandParse[4])
     elif commandParse[0] == "move_forward":
         move_forward(client, commandParse[1],commandParse[2])
     elif commandParse[0] == "move_backward":
