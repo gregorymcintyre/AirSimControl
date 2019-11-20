@@ -1,0 +1,19 @@
+{
+  "SeeDocsAt": "https://github.com/Microsoft/AirSim/blob/master/docs/settings.md",
+  "SettingsVersion": 1.2,
+  "SimMode": "Multirotor",
+  "ViewMode": "Manual",
+  
+  "ClockSpeed": 1,
+	
+	"Vehicles": {
+		"ALPHA": {
+		  "VehicleType": "SimpleFlight",
+		  "X": 4, "Y": 0, "Z": -2
+		},
+		"BRAVO": {
+		  "VehicleType": "SimpleFlight",
+		  "X": 8, "Y": 0, "Z": -2
+		}
+    }
+}
