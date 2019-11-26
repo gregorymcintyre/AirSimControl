@@ -10,96 +10,185 @@ import glob
 import setup_path 
 import airsim
 from pathlib import Path
-from move_to import move_to
-from move_forward import move_forward
-from move_backward import move_backward
-from move_up import move_up
-from move_down import move_down
-from move_left import move_left
-from move_right import move_right
+import math
+
 
 client = airsim.MultirotorClient()
 client.confirmConnection()
 #client.enableApiControl(True)
-client.enableApiControl(True, "Drone1")
-client.enableApiControl(True, "Drone2")
+client.enableApiControl(True, "ALPHA")
+client.enableApiControl(True, "BRAVO")
+client.enableApiControl(True, "CHARLIE")
+client.enableApiControl(True, "DELTA")
+client.enableApiControl(True, "ECHO")
 #client.armDisarm(True)
-client.armDisarm(True, "Drone1")
-client.armDisarm(True, "Drone2")
+client.armDisarm(True, "ALPHA")
+client.armDisarm(True, "BRAVO")
+client.armDisarm(True, "CHARLIE")
+client.armDisarm(True, "DELTA")
+client.armDisarm(True, "ECHO")
 
 #client.drivetrain = airsim.DrivetrainType.ForwardOnly
 #print("Fixed wing mode\n")
 
-dAlpha = client.takeoffAsync(vehicle_name="ALPHA")
-dBravo = client.takeoffAsync(vehicle_name="BRAVO")
-dAlpha.join()
-dBravo.join()
-
-print("\nCommand List\n--------------");
-pyfiles = []
-for file in glob.glob("*.py"):
-    pyfiles.append(file[:-3])
-    
-pyfiles.remove('AirSimControl')
-pyfiles.remove('test')
-pyfiles.remove('setup_path')
-
-print('\n'.join(pyfiles))
-print('*q or quit')
+print("\nCommand List\n-------------\n<ID> <CMD> <CS | Grid | (Polar & Alpha)> <S>\n");
+print('land')
+print('move_to')
+print('takeoff')
+print('quit')
 
 file = open("callsigns.txt", "r")
 data = file.readlines()
 
-
 state = True
 callsign = False
 collectedCallsign = []
+collectedCommand = []
 
 while state:
+
+    #print(dAlpha)
+    #print(dBravo)
+    
     command = input("\nEnter Command: ")
     commandParse = command.split(" ");
-    print(commandParse);
-    #if len(commandParse) == 
+    #print(commandParse);
     
-    #print(data)
-    for line in data:
-        words = line.split()
-        #print(words)
+    if len(commandParse) == 1:
+        collectedCommand = [0, commandParse[0]]
+    elif len(commandParse) == 2:
+        collectedCommand = [commandParse[0], commandParse[1]]
         
-        try:
-            if words[0] == commandParse[1]:
-                #print(commandParse[1])
-                collectedCallsign = words
-                callsign = True
-                print(collectedCallsign)
-        except:
-            print("", end="")
-    
-    if commandParse[0] == "move_to":
-        if callsign:
-            move_to(client, collectedCallsign[1], collectedCallsign[2], collectedCallsign[3], commandParse[2])
-            #print(client, commandParse[1], collectedCallsign[1], collectedCallsign[2],collectedCallsign[3])
-            callsign = False
+        
+    elif commandParse[1] == "move_to":    
+        if len(commandParse) == 3:
+            print("<ID> <CMD> <CS>")
+            #print("3: " + ' '.join(commandParse))
+            for line in data:
+                words = line.split()     
+                if words[0] == commandParse[2]:
+                    #print(words)
+                    collectedCallsign = words
+                    callsign = True
+            collectedCommand = [commandParse[0], commandParse[1], collectedCallsign[1], collectedCallsign[2], collectedCallsign[3], 1]
+            #print(collectedCommand)
+        elif len(commandParse) == 4:
+            print("<ID> <CMD> <CS> <S>")
+            #print("4: " + ' '.join(commandParse))
+            for line in data:
+                words = line.split()     
+                if words[0] == commandParse[2]:
+                    #print(words)
+                    collectedCallsign = words
+                    callsign = True
+            collectedCommand = [commandParse[0], commandParse[1], collectedCallsign[1], collectedCallsign[2], collectedCallsign[3], commandParse[3]]
+            #print(collectedCommand)
+        elif len(commandParse) == 5:
+            print("<ID> <CMD> <X> <Y> <Z>")
+            #print("5: " + ' '.join(commandParse))
+            collectedCommand = [commandParse[0], commandParse[1], commandParse[2], commandParse[3], commandParse[4], 1]
+            #print(collectedCommand)
+        elif len(commandParse) == 6:
+            print("<ID> <CMD> <X> <Y> <Z> <S>")
+            #print("6: " + ' '.join(commandParse))
+            collectedCommand = [commandParse[0], commandParse[1], commandParse[2], commandParse[3], commandParse[4], commandParse[5]]
+            #print(collectedCommand)
         else:
-            move_to(client, commandParse[1],commandParse[2],commandParse[3],commandParse[4])
-    elif commandParse[0] == "move_forward":
-        move_forward(client, commandParse[1],commandParse[2])
-    elif commandParse[0] == "move_backward":
-        move_backward(client, commandParse[1],commandParse[2]) 
-    elif commandParse[0] == "move_up":
-        move_up(client, commandParse[1],commandParse[2]) 
-    elif commandParse[0] == "move_down":
-        move_down(client, commandParse[1],commandParse[2]) 
-    elif commandParse[0] == "move_left":
-        move_left(client, commandParse[1],commandParse[2]) 
-    elif commandParse[0] == "move_right":
-        move_right(client, commandParse[1],commandParse[2]) 
+            print('Move to, hu?')
+            print('Please enter a valid command')
+            
+            
+    elif commandParse[1] == "move_direction": 
+        vx = math.sin(int(commandParse[2])*math.pi/180) + math.cos(int(commandParse[3])*math.pi/180)
+        vy = math.sin(int(commandParse[2])*math.pi/180) + math.sin(int(commandParse[3])*math.pi/180)
+        vz = math.cos(int(commandParse[2])*math.pi/180)
         
-    elif command in pyfiles:
-        exec(Path(str(command) + ".py").read_text())
-    elif command == "*q" or command == "quit":
-        client.enableApiControl(False);
-        print("Exiting..")
+        if len(commandParse) == 4:
+            print("<ID> <CMD> <POLAR> <ALPHA>")
+            collectedCommand = [commandParse[0], commandParse[1], vx, vy, vz, -1]
+        elif len(commandParse) == 5:
+            print("<ID> <CMD> <POLAR> <ALPHA> <S | R>")
+            collectedCommand = [commandParse[0], commandParse[1], vx, vy, vz, commandParse[4]]
+        else:
+            print('What direction?!')
+            print('Please enter a valid command')
+    
+    #exec(Path("test.py").read_text())
+    
+    
+    
+    if len(collectedCommand) < 1:
+        print("A boo boo has occured")
+    elif collectedCommand[1] == "quit":
+        print("Exiting...")
+        client.armDisarm(True, "ALPHA")
+        client.enableApiControl(False, "ALPHA")
+        client.armDisarm(True, "BRAVO")
+        client.enableApiControl(False, "BRAVO")
+        client.armDisarm(True, "CHARLIE")
+        client.enableApiControl(False, "CHARLIE")
+        client.armDisarm(True, "DELTA")
+        client.enableApiControl(False, "DELTA")
+        client.armDisarm(True, "ECHO")
+        client.enableApiControl(False, "ECHO")
         state = False
+        quit();
+    elif collectedCommand[1] == "getup":
+        client.takeoffAsync(vehicle_name="ALPHA")
+        client.takeoffAsync(vehicle_name="BRAVO")
+        client.takeoffAsync(vehicle_name="CHARLIE")
+        client.takeoffAsync(vehicle_name="DELTA")
+        client.takeoffAsync(vehicle_name="ECHO")
+    elif collectedCommand[1] == "getdown":
+        client.landAsync(vehicle_name="ALPHA")
+        client.landAsync(vehicle_name="BRAVO")
+        client.landAsync(vehicle_name="CHARLIE")
+        client.landAsync(vehicle_name="DELTA")
+        client.landAsync(vehicle_name="ECHO")
+    elif collectedCommand[1] == "starburst":
+        client.moveToPositionAsync(0, 0, -10, 5, vehicle_name="ALPHA")
+        client.moveToPositionAsync(10, 0, -1, 5, vehicle_name="BRAVO")
+        client.moveToPositionAsync(0, 10, -1, 5, vehicle_name="CHARLIE")
+        client.moveToPositionAsync(-10, 0, -1, 5, vehicle_name="DELTA")
+        client.moveToPositionAsync(0, -10, -1, 5, vehicle_name="ECHO")
+    elif collectedCommand[1] == "converge":
+        client.moveToPositionAsync(0, 0, -1, 1, vehicle_name="ALPHA")
+        client.moveToPositionAsync(0, 0, -1, 1, vehicle_name="BRAVO")
+        client.moveToPositionAsync(0, 0, -1, 1, vehicle_name="CHARLIE")
+        client.moveToPositionAsync(0, 0, -1, 1, vehicle_name="DELTA")
+        client.moveToPositionAsync(0, 0, -1, 1, vehicle_name="ECHO")
+
+        
+    elif collectedCommand[1] == "move_to":
+        print(collectedCommand)
+        #print(collectedCommand[0], collectedCommand[1], collectedCommand[2], collectedCommand[3],collectedCommand[4],collectedCommand[5])
+        #MultirotorRpcLibClient* MultirotorRpcLibClient::moveToPositionAsync(float x, float y, float z, float velocity, float timeout_sec, DrivetrainType drivetrain, const YawMode& yaw_mode, float lookahead, float adaptive_lookahead, const std::string& vehicle_name)
+        client.moveToPositionAsync(int(collectedCommand[2]), int(collectedCommand[3]),int(collectedCommand[4]),int(collectedCommand[5]), vehicle_name=collectedCommand[0])
+        #f1.join()
+    elif collectedCommand[1] == "move_direction":
+        print(collectedCommand)
+        #MultirotorRpcLibClient* MultirotorRpcLibClient::moveByVelocityZAsync(float vx, float vy, float z, float duration, DrivetrainType drivetrain, const YawMode& yaw_mode, const std::string& vehicle_name)
+        client.moveByVelocityZAsync(collectedCommand[2], collectedCommand[3], collectedCommand[4], int(collectedCommand[5]), vehicle_name=collectedCommand[0])
+    elif collectedCommand[1] == "takeoff":
+        landed = client.getMultirotorState(vehicle_name=collectedCommand[0]).landed_state
+        if landed == airsim.LandedState.Landed:
+            print("taking off...")
+            client.enableApiControl(True, vehicle_name=collectedCommand[0])
+            client.armDisarm(True, vehicle_name=collectedCommand[0])
+            client.takeoffAsync(vehicle_name=collectedCommand[0]).join()
+        else:
+            print("already flying...")
+            client.hoverAsync(vehicle_name=collectedCommand[0]).join()
+    elif collectedCommand[1] == "land":
+        landed = client.getMultirotorState(vehicle_name=collectedCommand[0]).landed_state
+        if landed == airsim.LandedState.Landed:
+            print("already landed...")
+        else:
+            print("landing...")
+            client.landAsync(vehicle_name=collectedCommand[0]).join()
+        client.armDisarm(False)
+        client.enableApiControl(False)
     else:
         print('Please enter a valid command')
+
+    
