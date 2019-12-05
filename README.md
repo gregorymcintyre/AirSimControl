@@ -18,7 +18,7 @@ https://github.com/gregorymcintyre/AirSimControl.git
 \Documents\AirSim
 
 * Run AirSimControl with
-python AirSimContol.py
+`python AirSimContol.py`
 
 # Command Key
 * `<ID>` = Drone Identifier e.g. ALPHA (found in settings.json)
