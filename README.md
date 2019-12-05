@@ -4,7 +4,7 @@
   
 Built from AirSimClient behaviours. A console and graphical interface for using pyclient to contol AirSim multirotor.  
 
-# AisSim Setup
+# AirSim Setup
 https://microsoft.github.io/AirSim/docs/build_windows/
 
 # AirSimControl Setup
