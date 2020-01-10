@@ -2,7 +2,9 @@
 * AirSimControl.py
 * Greg McIntyre
   
-Built from AirSimClient behaviours. A console and graphical interface for using pyclient to contol AirSim multirotor.  
+Built from AirSimClient behaviours. A console and graphical interface for using pyclient to contol AirSim multirotor.   
+TODO: Relative to Absolute Position of drones  
+NOTE: Redundant files have been left in place for future improvement  
 
 # AirSim Setup
 https://microsoft.github.io/AirSim/docs/build_windows/
@@ -16,7 +18,7 @@ https://github.com/gregorymcintyre/AirSimControl.git
 \Documents\AirSim
 
 * Run AirSimControl with
-python AirSimContol.py
+`python AirSimContol.py`
 
 # Command Key
 * `<ID>` = Drone Identifier e.g. ALPHA (found in settings.json)
